@@ -1,7 +1,7 @@
 const Task = require("../models/Task");
 const AppError = require("../utils/AppError");
 
-const isAvailable = (req , res, next)=>{
+const isAvailable = async (req , res, next)=>{
     const{
         params: {id}
     }=req;
