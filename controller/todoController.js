@@ -62,7 +62,7 @@ const getSingleTask = async (req, res, next) => {
   return sendResponse(req, res, {
     statusCode: 200,
     message: `task with id ${id}`,
-    payload: { ...req.task },
+    payload: req.task ,
   });
 };
 
@@ -71,15 +71,13 @@ const deleteTask = async (req, res, next) => {
     params: { id },
   } = req;
   let task = req.task;
-  console.log("task fetched :", task);
+
   try {
     await Task.deleteOne({ id: id });
-    const tasks = await Task.find().select("-_id -__v");
-    console.log("after deletion", tasks);
     return sendResponse(req, res, {
       statusCode: 200,
       message: `todo with id ${id} deleted`,
-      payload: { ...req.task },
+      payload: "" ,
     });
   } catch (err) {
     console.log(err.message);
@@ -94,18 +92,22 @@ const updateTask = async (req, res, next) => {
     params: { id },
   } = req;
   let task = req.task;
+
   console.log("updateObject", updateObject.description);
   try {
 
-    await Task.updateOne(
+   const updatedTask= await Task.findOneAndUpdate(
       { id:id },
-      { $set: { description: updateObject.description } }
-    );
-    console.log("task after updating", task);
+      { $set: { description: updateObject.description } }, //{...task , {updatedObject}}
+      {new: true}
+    )
+  
+  //  task = {...task, description : updateObject.description }
+  //  await task.save();
     return sendResponse(req, res, {
       statusCode: 200,
       message: `todo with id ${id} updated`,
-      payload: {...task},
+      payload: updatedTask,
     });
   } catch (err) {
     return next(new AppError(500, "internal error operation"));

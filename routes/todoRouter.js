@@ -1,6 +1,6 @@
 const {Router} = require("express");
 const { addTask, getAllTasks, getSingleTask, deleteTask, updateTask } = require("../controller/todoController");
-const isAvailable = require("../middlewares/validators");
+const isAvailable = require("../middlewares/taskValidators");
 
 const todoRouter = Router();
 // /todos

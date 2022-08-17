@@ -6,8 +6,8 @@ const isAvailable = async (req , res, next)=>{
         params: {id}
     }=req;
     try{
-        let task = await Task.find({id:id})
-        if(!task.length){
+        let task = await Task.findOne({id:id})
+        if(!task){
             return next(new AppError(404, `Task with id ${id} not found`));
         }
         req.task =task;
