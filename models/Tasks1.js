@@ -16,32 +16,32 @@ const TaskScehma = mongoose.Schema(
   {
     id: {
       type: String,
-      default: uniqid(),
+    //   default: uniqid(),
     },
     description: {
       type: String,
-      required: [true, "Description cant be empty"],
-      minLength: [
-        4,
-        "Description minimum length should be greater than 4 characters",
-      ],
+    //   required: [true, "Description cant be empty"],
+    //   minLength: [
+    //     4,
+    //     "Description minimum length should be greater than 4 characters",
+    //   ],
     },
     isComplete:{
         type: Boolean,
-        default: false
+        // default: false
     },
-    status:{
-      type: String,
-      default: taskStatus.notStarted
+//     status:{
+//       type: String,
+//       default: taskStatus.notStarted
+//   },
   },
-  },
-  {
-    // _id: false,
-    timestamps:true,
-  },
+//   {
+//     // _id: false,
+//     timestamps:true,
+//   },
   // { _id : false }
 );
 
-const Task = mongoose.model("Tasks", TaskScehma);
+const Task1 = mongoose.model("Tasks1", TaskScehma);
 
-module.exports = Task;
+module.exports = Task1;

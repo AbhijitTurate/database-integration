@@ -8,35 +8,75 @@ const sendResponse = require("../middlewares/sendResponse");
 const AppError = require("../utils/AppError");
 const { log } = require("console");
 
-const addTask = async (req, res, next) => {
+// Query params
+const getPage = async(req , res ,next)=>{
   const {
-    body: { description },
-  } = req;
-
-  console.log("description in body:", description);
-  try {
-    const newTask = new Task({ id: uniqid(), description: description });
-    console.log("new task", newTask);
-    await newTask.save();
-    return sendResponse(req, res, {
-      statusCode: 200,
-      message: "Todo added sucessfully",
-      payload: newTask,
-    });
-  } catch {
+    query: {page}
+  } = req
+  console.log("inside getPage",page);
+  try{
+    let totalPages = (await Task.find()).length /10;
+    if(!totalPages){
+      return next(new AppError(404 , "Pages not found"));
+    }
+    let pageId = parseInt(page);
+    if(!pageId){
+      pageId=1;
+    }
+    if(pageId>totalPages){
+      pageId=totalPages;
+    }
+    console.log("page id:",pageId);
+    let resultPage = await (await Task.find()).slice(pageId * 10 -10,pageId*10);
+    // console.log("page found",page);
+    return sendResponse(req , res , {statusCode:200 , message:"todo tasks", payload:resultPage})
+  }catch(err){
+    console.log("error message",err.message);
     return next(new AppError(400, "Bad request"));
   }
-};
+ 
+}
 
+const getTaskWithAttri = async(req , res , next)=>{
+  const {
+    query: {page}
+  } = req
+  console.log("inside getPage",page);
+  try{
+    let totalPages = (await Task.find()).length /10;
+    if(!totalPages){
+      return next(new AppError(404 , "Pages not found"));
+    }
+    let pageId = parseInt(page);
+    if(!pageId){
+      pageId=1;
+    }
+    if(pageId>totalPages){
+      pageId=totalPages;
+    }
+    console.log("page id:",pageId);
+    let resultPage = await (await Task.find()).slice(pageId * 10 -10,pageId*10);
+    // console.log("page found",page);
+    return sendResponse(req , res , {statusCode:200 , message:"todo tasks", payload:resultPage})
+  }catch(err){
+    console.log("error message",err.message);
+    return next(new AppError(400, "Bad request"));
+  }
+
+}
+// Route params
 const getAllTasks = async (req, res, next) => {
   try {
     let tasks = await Task.find().select("-__v -_id");
+    let firstFive = await (await Task.find()).slice(0,10)
+    // console.log("tasks length", firstFive);
     return sendResponse(req, res, {
       statusCode: 200,
       message: "Tasks",
       payload: [...tasks],
     });
   } catch (err) {
+    console.log("error",err.message);
     return next(new AppError(500, " Error in fetching tasks"));
   }
 };
@@ -65,6 +105,28 @@ const getSingleTask = async (req, res, next) => {
     payload: req.task ,
   });
 };
+
+const addTask = async (req, res, next) => {
+  const {
+    body: { description },
+  } = req;
+
+  console.log("description in body:", req.body);
+  try {
+    const newTask = new Task({ id: uniqid(), description: description });
+    console.log("new task", newTask);
+    await newTask.save();
+    return sendResponse(req, res, {
+      statusCode: 200,
+      message: "Todo added sucessfully",
+      payload: newTask,
+    });
+  } catch {
+    return next(new AppError(400, "Bad request"));
+  }
+};
+
+
 
 const deleteTask = async (req, res, next) => {
   const {
@@ -119,4 +181,5 @@ module.exports = {
   getSingleTask,
   deleteTask,
   updateTask,
+  getPage
 };
