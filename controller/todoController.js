@@ -9,66 +9,90 @@ const AppError = require("../utils/AppError");
 const { log } = require("console");
 
 // Query params
-const getPage = async(req , res ,next)=>{
+const getPage = async (req, res, next) => {
   const {
-    query: {page}
-  } = req
-  console.log("inside getPage",page);
-  try{
-    let totalPages = (await Task.find()).length /10;
-    if(!totalPages){
-      return next(new AppError(404 , "Pages not found"));
+    query: { page },
+  } = req;
+
+  let resultPage = {};
+  try {
+    let totalPages = (await Task.find()).length / 10;
+    if (!totalPages) {
+      return next(new AppError(404, "Pages not found"));
     }
     let pageId = parseInt(page);
-    if(!pageId){
-      pageId=1;
+    if (!pageId) {
+      pageId = 1;
     }
-    if(pageId>totalPages){
-      pageId=totalPages;
+    if (pageId > totalPages) {
+      pageId = totalPages;
     }
-    console.log("page id:",pageId);
-    let resultPage = await (await Task.find()).slice(pageId * 10 -10,pageId*10);
+    console.log("page id:", pageId);
+    resultPage = await (await Task.find()).slice(pageId * 10 - 10, pageId * 10);
     // console.log("page found",page);
-    return sendResponse(req , res , {statusCode:200 , message:"todo tasks", payload:resultPage})
-  }catch(err){
-    console.log("error message",err.message);
+    return sendResponse(req, res, {
+      statusCode: 200,
+      message: "todo tasks",
+      payload: resultPage,
+    });
+  } catch (err) {
+    console.log("error message", err.message);
     return next(new AppError(400, "Bad request"));
   }
- 
-}
+};
 
-const getTaskWithAttri = async(req , res , next)=>{
-  const {
-    query: {page}
-  } = req
-  console.log("inside getPage",page);
-  try{
-    let totalPages = (await Task.find()).length /10;
-    if(!totalPages){
-      return next(new AppError(404 , "Pages not found"));
+const getTaskWithAttri = async (req, res, next) => {
+  let {
+    query: { page,limit, ...otherProps },
+  } = req;
+  console.log("limit", limit);
+  console.log("other props:", otherProps);
+  // let resultPage =
+  if(!limit){
+    limit=10
+  }
+  try {
+    let totalPages = Math.ceil((await Task.find({...otherProps})).length / limit);
+    console.log("totalpages:",totalPages);
+    if (!totalPages) {
+      return next(new AppError(404, "Pages not found"));
     }
     let pageId = parseInt(page);
-    if(!pageId){
-      pageId=1;
+    if (!pageId) {
+      pageId = 1;
     }
-    if(pageId>totalPages){
-      pageId=totalPages;
+    if (pageId > totalPages) {
+      return next(new AppError(500 , "No result found"))
+
     }
-    console.log("page id:",pageId);
-    let resultPage = await (await Task.find()).slice(pageId * 10 -10,pageId*10);
-    // console.log("page found",page);
-    return sendResponse(req , res , {statusCode:200 , message:"todo tasks", payload:resultPage})
-  }catch(err){
-    console.log("error message",err.message);
+    console.log("page id:", pageId);
+    let resultPage = await (
+      await Task.find({...otherProps})
+    ).slice(pageId * limit - limit, pageId * limit);
+    console.log("otherProps length:", Object.keys(otherProps).length);
+    if (Object.keys(otherProps).length) {
+      console.log("finding element with particular attributes");
+      let particularTask = await (
+        await Task.find({...otherProps}))
+      
+      console.log("particulartask type", typeof particularTask);
+     console.log("partcular task:",particularTask);
+    }
+    return sendResponse(req, res, {
+      statusCode: 200,
+      message: "todo tasks",
+      payload: resultPage,
+    });
+  } catch (err) {
+    console.log("error message", err.message);
     return next(new AppError(400, "Bad request"));
   }
-
-}
+};
 // Route params
 const getAllTasks = async (req, res, next) => {
   try {
     let tasks = await Task.find().select("-__v -_id");
-    let firstFive = await (await Task.find()).slice(0,10)
+    let firstFive = await (await Task.find()).slice(0, 10);
     // console.log("tasks length", firstFive);
     return sendResponse(req, res, {
       statusCode: 200,
@@ -76,7 +100,7 @@ const getAllTasks = async (req, res, next) => {
       payload: [...tasks],
     });
   } catch (err) {
-    console.log("error",err.message);
+    console.log("error", err.message);
     return next(new AppError(500, " Error in fetching tasks"));
   }
 };
@@ -102,7 +126,7 @@ const getSingleTask = async (req, res, next) => {
   return sendResponse(req, res, {
     statusCode: 200,
     message: `task with id ${id}`,
-    payload: req.task ,
+    payload: req.task,
   });
 };
 
@@ -126,8 +150,6 @@ const addTask = async (req, res, next) => {
   }
 };
 
-
-
 const deleteTask = async (req, res, next) => {
   const {
     params: { id },
@@ -139,7 +161,7 @@ const deleteTask = async (req, res, next) => {
     return sendResponse(req, res, {
       statusCode: 200,
       message: `todo with id ${id} deleted`,
-      payload: "" ,
+      payload: "",
     });
   } catch (err) {
     console.log(err.message);
@@ -157,15 +179,20 @@ const updateTask = async (req, res, next) => {
 
   console.log("updateObject", updateObject.description);
   try {
+    const updatedTask = await Task.findOneAndUpdate(
+      { id: id },
+      {
+        $set: {
+          description: updateObject.description,
+          isComplete: updateObject.isComplete,
+        },
+        //  {isComplete:updateObject.isComplete }
+      }, //{...task , {updatedObject}}
+      { new: true }
+    );
 
-   const updatedTask= await Task.findOneAndUpdate(
-      { id:id },
-      { $set: { description: updateObject.description } }, //{...task , {updatedObject}}
-      {new: true}
-    )
-  
-  //  task = {...task, description : updateObject.description }
-  //  await task.save();
+    //  task = {...task, description : updateObject.description }
+    //  await task.save();
     return sendResponse(req, res, {
       statusCode: 200,
       message: `todo with id ${id} updated`,
@@ -181,5 +208,6 @@ module.exports = {
   getSingleTask,
   deleteTask,
   updateTask,
-  getPage
+  getPage,
+  getTaskWithAttri,
 };
