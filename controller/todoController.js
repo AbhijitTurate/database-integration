@@ -50,7 +50,6 @@ const getTaskWithAttri = async (req, res, next) => {
   if (!limit) {
     limit = 10;
   }
- 
   try {
     let totalPages = Math.ceil(
       (await Task.find({ ...otherProps })).length / limit
@@ -66,17 +65,16 @@ const getTaskWithAttri = async (req, res, next) => {
     if (pageId > totalPages) {
       return next(new AppError(500, "No result found"));
     }
-    console.log("page id:", pageId);
-    let resultPage = await (
-      await Task.find({ ...otherProps })
-    ).slice(pageId * limit - limit, pageId * limit);
 
-    console.log("result:",resultPage);
-    return sendResponse(req, res, {
-      statusCode: 200,
-      message: "todo tasks",
-      payload: resultPage,
-    });
+    let query = Task.find({...otherProps}).skip(pageId * limit -limit).limit(limit)
+   
+    query.then((data)=>{
+      return sendResponse(req, res, {
+        statusCode: 200,
+        message: "todo tasks",
+        payload: data,
+      });
+    })
   } catch (err) {
     console.log("error message", err.message);
     return next(new AppError(400, "Bad request"));
