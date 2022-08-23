@@ -6,7 +6,6 @@ const uniqid = require("uniqid");
 const Task = require("../models/Task");
 const sendResponse = require("../middlewares/sendResponse");
 const AppError = require("../utils/AppError");
-const { log } = require("console");
 
 // Query params
 const getPage = async (req, res, next) => {
@@ -43,17 +42,20 @@ const getPage = async (req, res, next) => {
 
 const getTaskWithAttri = async (req, res, next) => {
   let {
-    query: { page,limit, ...otherProps },
+    query: { page, limit, ...otherProps },
   } = req;
   console.log("limit", limit);
   console.log("other props:", otherProps);
-  // let resultPage =
-  if(!limit){
-    limit=10
+ 
+  if (!limit) {
+    limit = 10;
   }
+ 
   try {
-    let totalPages = Math.ceil((await Task.find({...otherProps})).length / limit);
-    console.log("totalpages:",totalPages);
+    let totalPages = Math.ceil(
+      (await Task.find({ ...otherProps })).length / limit
+    );
+    console.log("totalpages:", totalPages);
     if (!totalPages) {
       return next(new AppError(404, "Pages not found"));
     }
@@ -62,22 +64,14 @@ const getTaskWithAttri = async (req, res, next) => {
       pageId = 1;
     }
     if (pageId > totalPages) {
-      return next(new AppError(500 , "No result found"))
-
+      return next(new AppError(500, "No result found"));
     }
     console.log("page id:", pageId);
     let resultPage = await (
-      await Task.find({...otherProps})
+      await Task.find({ ...otherProps })
     ).slice(pageId * limit - limit, pageId * limit);
-    console.log("otherProps length:", Object.keys(otherProps).length);
-    if (Object.keys(otherProps).length) {
-      console.log("finding element with particular attributes");
-      let particularTask = await (
-        await Task.find({...otherProps}))
-      
-      console.log("particulartask type", typeof particularTask);
-     console.log("partcular task:",particularTask);
-    }
+
+    console.log("result:",resultPage);
     return sendResponse(req, res, {
       statusCode: 200,
       message: "todo tasks",
