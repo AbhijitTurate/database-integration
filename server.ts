@@ -1,18 +1,18 @@
 // connection to db
 // start app
 
-const mongoose = require("mongoose");
-const Task = require("./models/Task");
-const dotenv = require("dotenv");
-const app = require("./app");
-const sendErrorResponse = require("./middlewares/sendErrorResponse");
+import mongoose from "mongoose";
+import Task from "./models/Task";
+import dotenv from "dotenv";
+import app from "./app";
+import sendErrorResponse from "./middlewares/sendErrorResponse";
 dotenv.config();
-const { DB_LOCAL, PORT } = process.env;
+const { DB_LOCAL , PORT } = process.env;
 
 app.use(sendErrorResponse);
 
 mongoose
-  .connect(DB_LOCAL, {})
+  .connect('mongodb://localhost:27017/Training-Class-2022', {})
   .then((connection) => {
     return app.listen(PORT || 3000, () => {
       console.log("server started on port", PORT);

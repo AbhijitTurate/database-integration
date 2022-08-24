@@ -1,18 +1,20 @@
-const fs = require("fs");
-const path = require("path");
-const express = require("express");
+import { Request , Response , NextFunction } from "express";
+import express from "express";
+import uniqid from "uniqid";
+import Task from "../models/Task";
+import sendResponse from "../middlewares/sendResponse";
+import AppError from "../utils/AppError";
+import { TypedRequestQuery } from "../interfaces/configRequests";
+import { CustomRequest } from "../interfaces/CustomRequest";
 const app = express();
-const uniqid = require("uniqid");
-const Task = require("../models/Task");
-const sendResponse = require("../middlewares/sendResponse");
-const AppError = require("../utils/AppError");
 
 // Query params
-const getPage = async (req, res, next) => {
-  const {
-    query: { page },
-  } = req;
+const getPage = async (req : Request, res:Response, next :NextFunction) => {
+  // const {
+  //   query: { page } ,
+  // } = req;
 
+  const page = (req.query as {page: string}).page
   let resultPage = {};
   try {
     let totalPages = (await Task.find()).length / 10;
@@ -35,30 +37,43 @@ const getPage = async (req, res, next) => {
       payload: resultPage,
     });
   } catch (err) {
+    if(err instanceof Error){
     console.log("error message", err.message);
+
+    }else{
+      console.log("error message", err);
+    }
     return next(new AppError(400, "Bad request"));
   }
 };
 
-const getTaskWithAttri = async (req, res, next) => {
-  let {
-    query: { page, limit, ...otherProps },
-  } = req;
+interface queryConfig{
+    page:string,
+    limit:number,
+    otherProps:object[]
+}
+
+const getTaskWithAttri = async (req : Request, res:Response, next :NextFunction) => {
+  let  { page , limit, ...otherProps }  = req.query as unknown as queryConfig;
+  // let page = (req.query as {page:string}).page;
+  // let limit = (req.query as {limit:string}).limit
+  // let otherProps = (req.query as {otherProps:object}).otherProps
   console.log("limit", limit);
   console.log("other props:", otherProps);
  
-  if (!limit) {
-    limit = 10;
+  let count = Number(limit)
+  if (!count) {
+    count = 10;
   }
   try {
     let totalPages = Math.ceil(
-      (await Task.find({ ...otherProps })).length / limit
+      (await Task.find({ ...otherProps })).length / count
     );
     console.log("totalpages:", totalPages);
     if (!totalPages) {
       return next(new AppError(404, "Pages not found"));
     }
-    let pageId = parseInt(page);
+    let pageId = Number(page);
     if (!pageId) {
       pageId = 1;
     }
@@ -66,9 +81,11 @@ const getTaskWithAttri = async (req, res, next) => {
       return next(new AppError(500, "No result found"));
     }
 
-    let query = Task.find({...otherProps}).skip(pageId * limit -limit).limit(limit)
+    let query = Task.find({...otherProps}).skip(pageId * count -count).limit(count)
    
     query.then((data)=>{
+      console.log("Type of payload:",typeof data);
+      
       return sendResponse(req, res, {
         statusCode: 200,
         message: "todo tasks",
@@ -76,32 +93,29 @@ const getTaskWithAttri = async (req, res, next) => {
       });
     })
   } catch (err) {
-    console.log("error message", err.message);
     return next(new AppError(400, "Bad request"));
   }
 };
 // Route params
-const getAllTasks = async (req, res, next) => {
+const getAllTasks = async (req : Request, res:Response, next :NextFunction) => {
   try {
     let tasks = await Task.find().select("-__v -_id");
-    let firstFive = await (await Task.find()).slice(0, 10);
-    // console.log("tasks length", firstFive);
+   
     return sendResponse(req, res, {
       statusCode: 200,
       message: "Tasks",
       payload: [...tasks],
     });
   } catch (err) {
-    console.log("error", err.message);
+   
     return next(new AppError(500, " Error in fetching tasks"));
   }
 };
 
-const getSingleTask = async (req, res, next) => {
-  const {
-    params: { id },
-  } = req;
+const getSingleTask = async (req : CustomRequest, res:Response, next :NextFunction) => {
+ 
 
+  const id = req.params.id
   // try{
   //   const task = await Task.find({id: id}).select("-_id -__v");
   //   console.log("task:",task.length);
@@ -122,7 +136,7 @@ const getSingleTask = async (req, res, next) => {
   });
 };
 
-const addTask = async (req, res, next) => {
+const addTask = async (req : Request, res:Response, next :NextFunction) => {
   const {
     body: { description },
   } = req;
@@ -142,7 +156,7 @@ const addTask = async (req, res, next) => {
   }
 };
 
-const deleteTask = async (req, res, next) => {
+const deleteTask = async (req : CustomRequest, res:Response, next :NextFunction) => {
   const {
     params: { id },
   } = req;
@@ -156,12 +170,12 @@ const deleteTask = async (req, res, next) => {
       payload: "",
     });
   } catch (err) {
-    console.log(err.message);
+   
     return next(new AppError(500, "internal error operation"));
   }
 };
 
-const updateTask = async (req, res, next) => {
+const updateTask = async (req : CustomRequest, res:Response, next :NextFunction) => {
   const { body: updateObject } = req;
 
   const {
@@ -188,13 +202,13 @@ const updateTask = async (req, res, next) => {
     return sendResponse(req, res, {
       statusCode: 200,
       message: `todo with id ${id} updated`,
-      payload: updatedTask,
+      payload: updatedTask!,
     });
   } catch (err) {
     return next(new AppError(500, "internal error operation"));
   }
 };
-module.exports = {
+export {
   addTask,
   getAllTasks,
   getSingleTask,

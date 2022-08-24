@@ -1,7 +1,7 @@
-const express = require("express");
+import express from "express";
 
-const todoRouter = require("./routes/todoRouter");
-const sendErrorResponse = require("./middlewares/sendErrorResponse");
+import todoRouter from "./routes/todoRouter";
+import sendErrorResponse from "./middlewares/sendErrorResponse";
 
 // dotenv.config();
 
@@ -22,4 +22,4 @@ app.use("/todos",todoRouter);
 //     console.log("server running on port",process.env.PORT);
 // }) 
 
-module.exports = app;
+export default app
