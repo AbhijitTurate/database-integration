@@ -184,7 +184,6 @@ var updateTask = function (req, res, next) { return __awaiter(void 0, void 0, vo
             case 0:
                 updateObject = req.body;
                 id = req.params.id;
-                console.log("updateObject", updateObject.description);
                 _a.label = 1;
             case 1:
                 _a.trys.push([1, 3, , 4]);
@@ -192,6 +191,7 @@ var updateTask = function (req, res, next) { return __awaiter(void 0, void 0, vo
                         $set: {
                             description: updateObject.description,
                             isComplete: updateObject.isComplete,
+                            status: updateObject.status
                         },
                     }, { new: true })];
             case 2:

@@ -118,6 +118,7 @@ const updateTask = async (req :Request, res:Response, next :NextFunction) => {
         $set: {
           description: updateObject.description,
           isComplete: updateObject.isComplete,
+          status: updateObject.status
         },
         
       }, 
