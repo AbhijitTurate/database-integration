@@ -20,10 +20,16 @@ npm run start
 
 # API Endpoint
 
+# Fetch tasks
 ## `GET /todos`
 get request to this endpoint will returns a response with 10 todos.
 
 ## `GET /todos?`
 get request to this endpoint will return a response with specified queries in request.
 for example. `GET /todos?isComplete=true&description=Task 1` will return a response with task having **description** *Task 1* and **isComplete** *true*
+
+## `GET /todos/TaskID
+this endpoint requires a **TaskId** to be passed in URL. If task with a given **TaskId** exits , you will get response containing the task with **TaskId** you passed.If task does not exists you will get response with `404` status code.
+
+
 
