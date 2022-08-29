@@ -72,6 +72,34 @@ it's mandatory to pass atleast one property specified in **Sample body**.
 - Use MongoDB to store tasks
 
 # Project Directory
-# controller
+```
+.
+├── controller
+|   └──todoController.ts
+├── dist
+├── interfaces
+|   └──CustomRequest.ts
+|   └──configRequests.ts
+├── middlewares
+|   └──sendErrorResponse.ts
+|   └──sendResponse.ts
+|   └──taskValidators.ts
+├── migrations
+|   └──20220817070214-addTimestamps.js
+├── models
+|   └──Task.ts
+├── routes
+|   └──todoRouter.ts
+├── utils
+|   └──AppError.ts
+└── .env
+└── .gitignore
+└── README.md
+└── app.ts
+└── migrate-mongo-config.js
+└── package-lock.json
+└── package.json
+└── server.ts
+└── tsconfig.json
 
-* [todoController.ts](.\controller\todoController.ts)
+```
