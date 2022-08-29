@@ -10,5 +10,12 @@ before installing this project , make sure that you have [node.js](https://nodej
 npm install
 npm run start
 ```
+`npm install` will install all dependencies required for project and `npm run start` will run the application.
+
+# Feutures
+- Get Tasks
+- Get Task by ID
+- Update Task
+- Delete Task
 
 
