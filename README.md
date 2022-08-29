@@ -44,7 +44,7 @@ Sample body
 "status":"status of task",
 "isComplete": true|false
 ```
-it's mandatory to pass description within a body.if you provide only description of task then application will assign **"NotStarted"** to "status" and **true** to "isComplete".
+it's mandatory to pass description within a body.if you provide only description of task then application will assign **"NotStarted"** to "status" and **false** to "isComplete".
 
 # Delete Task
 
