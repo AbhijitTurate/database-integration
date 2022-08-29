@@ -73,4 +73,3 @@ it's mandatory to pass atleast one property specified in **Sample body**.
 
 # Project Directory
 
-
