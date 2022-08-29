@@ -18,4 +18,10 @@ npm run start
 - Update Task
 - Delete Task
 
+# API Endpoint
 
+## `GET /todos`
+get request to this endpoint will returns a response with 10 todos.
+
+## `GET /todos?`
+get request to this endpoint will return a response with 
