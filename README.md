@@ -28,8 +28,13 @@ get request to this endpoint will returns a response with 10 todos.
 get request to this endpoint will return a response with specified queries in request.
 for example. `GET /todos?isComplete=true&description=Task 1` will return a response with task having **description** *Task 1* and **isComplete** *true*
 
-## `GET /todos/TaskID
+## `GET /todos/TaskID`
 this endpoint requires a **TaskId** to be passed in URL. If task with a given **TaskId** exits , you will get response containing the task with **TaskId** you passed.If task does not exists you will get response with `404` status code.
 
+#Post Task
+
+## `POSt /todos`
+This endpoint requires a body to be passed along with the request. If a valid body is passed with the request, a new task will be created with the body passed.
+If not, you get the response with `400 Bad Request` status code.
 
 
