@@ -6,6 +6,7 @@ import sendResponse from "../middlewares/sendResponse";
 import AppError from "../utils/AppError";
 import { TypedRequestQuery } from "../interfaces/configRequests";
 import { CustomRequest } from "../interfaces/CustomRequest";
+import { exit } from "process";
 const app = express();
 
 
@@ -69,12 +70,12 @@ const getSingleTask = async (req : CustomRequest, res:Response, next :NextFuncti
 
 const addTask = async (req : Request, res:Response, next :NextFunction) => {
   const {
-    body: { description },
+    body: { description,isComplete,status },
   } = req;
 
   console.log("description in body:", req.body);
   try {
-    const newTask = new Task({ id: uniqid(), description: description });
+    const newTask = new Task({ id: uniqid(), description: description,isComplete,status });
     console.log("new task", newTask);
     await newTask.save();
     return sendResponse(req, res, {
@@ -104,13 +105,26 @@ const deleteTask = async (req : Request, res:Response, next :NextFunction) => {
   }
 };
 
-const updateTask = async (req :Request, res:Response, next :NextFunction) => {
+const updateTask = async (req :CustomRequest, res:Response, next :NextFunction) => {
   const { body: updateObject } = req;
 
   const {
     params: { id },
   } = req;
  
+  let isValidUpdate = false
+  const editableProps = ["description","isComplete","status"];
+
+  for(const property in updateObject){
+   isValidUpdate = editableProps.includes(property)
+   if(isValidUpdate){
+    break
+   }
+  }
+  
+  if(!isValidUpdate){
+    return next(new AppError(400, "bad request"));
+  }
   try {
     const updatedTask = await Task.findOneAndUpdate(
       { id: id },

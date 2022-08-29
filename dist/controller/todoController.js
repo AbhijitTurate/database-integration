@@ -125,27 +125,27 @@ var getSingleTask = function (req, res, next) { return __awaiter(void 0, void 0,
 }); };
 exports.getSingleTask = getSingleTask;
 var addTask = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var description, newTask, _a;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
+    var _a, description, isComplete, status, newTask, _b;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
             case 0:
-                description = req.body.description;
+                _a = req.body, description = _a.description, isComplete = _a.isComplete, status = _a.status;
                 console.log("description in body:", req.body);
-                _b.label = 1;
+                _c.label = 1;
             case 1:
-                _b.trys.push([1, 3, , 4]);
-                newTask = new Task_1.default({ id: (0, uniqid_1.default)(), description: description });
+                _c.trys.push([1, 3, , 4]);
+                newTask = new Task_1.default({ id: (0, uniqid_1.default)(), description: description, isComplete: isComplete, status: status });
                 console.log("new task", newTask);
                 return [4 /*yield*/, newTask.save()];
             case 2:
-                _b.sent();
+                _c.sent();
                 return [2 /*return*/, (0, sendResponse_1.default)(req, res, {
                         statusCode: 200,
                         message: "Todo added sucessfully",
                         payload: newTask,
                     })];
             case 3:
-                _a = _b.sent();
+                _b = _c.sent();
                 return [2 /*return*/, next(new AppError_1.default(400, "Bad request"))];
             case 4: return [2 /*return*/];
         }
@@ -178,12 +178,23 @@ var deleteTask = function (req, res, next) { return __awaiter(void 0, void 0, vo
 }); };
 exports.deleteTask = deleteTask;
 var updateTask = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var updateObject, id, updatedTask, err_3;
+    var updateObject, id, isValidUpdate, editableProps, property, updatedTask, err_3;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 updateObject = req.body;
                 id = req.params.id;
+                isValidUpdate = false;
+                editableProps = ["description", "isComplete", "status"];
+                for (property in updateObject) {
+                    isValidUpdate = editableProps.includes(property);
+                    if (isValidUpdate) {
+                        break;
+                    }
+                }
+                if (!isValidUpdate) {
+                    return [2 /*return*/, next(new AppError_1.default(400, "bad request"))];
+                }
                 _a.label = 1;
             case 1:
                 _a.trys.push([1, 3, , 4]);
