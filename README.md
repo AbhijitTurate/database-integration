@@ -25,5 +25,5 @@ get request to this endpoint will returns a response with 10 todos.
 
 ## `GET /todos?`
 get request to this endpoint will return a response with specified queries in request.
-for example. `GET /todos?isComplete=true&description=Task 1` will return a response with task having description *Task 1* and isComplete *true*
+for example. `GET /todos?isComplete=true&description=Task 1` will return a response with task having **description** *Task 1* and **isComplete** *true*
 
