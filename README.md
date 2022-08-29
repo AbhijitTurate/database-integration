@@ -34,8 +34,16 @@ If task does not exists you will get response with `404` status code.
 
 #Post Task
 
-## `POSt /todos`
+## `POST /todos`
 This endpoint requires a body to be passed along with the request. If a valid body is passed with the request, a new task will be created with the body passed.
 If not, you get the response with `400 Bad Request` status code.
+
+Sample body
+```
+"description":"Task description goes here",
+"status":"status of task",
+"isComplete": true|false
+```
+it's mandatory to pass description within a body.if you provide only description of task then application will assign **"NotStarted"** to "status" and **true** to "isComplete".
 
 
