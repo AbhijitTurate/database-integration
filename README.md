@@ -92,14 +92,14 @@ it's mandatory to pass atleast one property specified in **Sample body**.
 |   └──todoRouter.ts
 ├── utils
 |   └──AppError.ts
-└── .env
-└── .gitignore
-└── README.md
-└── app.ts
-└── migrate-mongo-config.js
-└── package-lock.json
-└── package.json
-└── server.ts
-└── tsconfig.json
+├── .env
+├── .gitignore
+├── README.md
+├── app.ts
+├── migrate-mongo-config.js
+├── package-lock.json
+├── package.json
+├── server.ts
+├── tsconfig.json
 
 ```
