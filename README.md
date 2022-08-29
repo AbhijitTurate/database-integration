@@ -46,4 +46,10 @@ Sample body
 ```
 it's mandatory to pass description within a body.if you provide only description of task then application will assign **"NotStarted"** to "status" and **true** to "isComplete".
 
+#Delete Task
+
+## DELETE /todos/TaskId
+this endpoint requires a **TaskId** to be passed in URL. If task with a given **TaskId** exits , you will get response containing the task with **TaskId** you passed.
+If task does not exists you will get response with `404` status code.
+
 
