@@ -49,7 +49,21 @@ it's mandatory to pass description within a body.if you provide only description
 # Delete Task
 
 ### DELETE /todos/TaskId
-this endpoint requires a **TaskId** to be passed in URL. If task with a given **TaskId** exits , you will get response containing the task with **TaskId** you passed.
+this endpoint requires a **TaskId** to be passed in URL. If task with a given **TaskId** exits , you will get response with a message that `task with id TaskID is deleted`
 If task does not exists you will get response with `404` status code.
+
+# Update Task
+
+### PATCH /todos/TaskId
+This endpoint requires a **body** to be passed along with **TaskId** the request.First , it will check If task with a given **TaskId** exits ,
+If task does not exists you will get response with `404` status code.If task exists , application will check if body contains atleast one of the field in sample body show below.If not, you get the response with `400 Bad Request` status code.Else, you will get response with `updatedTask and 200` status code
+
+Sample body
+```
+"description":"updated Task description goes here",
+"status":"status of task",
+"isComplete": true|false
+```
+it's mandatory to pass atleast one property specified in **Sample body**.
 
 
