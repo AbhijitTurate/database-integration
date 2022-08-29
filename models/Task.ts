@@ -6,10 +6,10 @@ import mongoose, { Schema , model} from "mongoose";
 import  uniqid  from "uniqid";
 
 enum taskStatus {
-  notStarted ,
-  processing,
-  blocked,
-  completed
+  notStarted ="NotStarted",
+  processing = "Processing",
+  blocked = "Blocked",
+  completed = "Completed"
 }
 interface ITask{
   id: string,

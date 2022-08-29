@@ -11,10 +11,10 @@ var mongoose_1 = require("mongoose");
 var uniqid_1 = __importDefault(require("uniqid"));
 var taskStatus;
 (function (taskStatus) {
-    taskStatus[taskStatus["notStarted"] = 0] = "notStarted";
-    taskStatus[taskStatus["processing"] = 1] = "processing";
-    taskStatus[taskStatus["blocked"] = 2] = "blocked";
-    taskStatus[taskStatus["completed"] = 3] = "completed";
+    taskStatus["notStarted"] = "NotStarted";
+    taskStatus["processing"] = "Processing";
+    taskStatus["blocked"] = "Blocked";
+    taskStatus["completed"] = "Completed";
 })(taskStatus || (taskStatus = {}));
 var TaskScehma = new mongoose_1.Schema({
     id: {

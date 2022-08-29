@@ -57,86 +57,23 @@ var __rest = (this && this.__rest) || function (s, e) {
         }
     return t;
 };
-var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
-    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
-        if (ar || !(i in from)) {
-            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
-            ar[i] = from[i];
-        }
-    }
-    return to.concat(ar || Array.prototype.slice.call(from));
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getTaskWithAttri = exports.getPage = exports.updateTask = exports.deleteTask = exports.getSingleTask = exports.getAllTasks = exports.addTask = void 0;
+exports.updateTask = exports.deleteTask = exports.getSingleTask = exports.addTask = exports.getSpecificTasks = void 0;
 var express_1 = __importDefault(require("express"));
 var uniqid_1 = __importDefault(require("uniqid"));
 var Task_1 = __importDefault(require("../models/Task"));
 var sendResponse_1 = __importDefault(require("../middlewares/sendResponse"));
 var AppError_1 = __importDefault(require("../utils/AppError"));
 var app = (0, express_1.default)();
-// Query params
-var getPage = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var page, resultPage, totalPages, pageId, err_1;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                page = req.query.page;
-                resultPage = {};
-                _a.label = 1;
-            case 1:
-                _a.trys.push([1, 5, , 6]);
-                return [4 /*yield*/, Task_1.default.find()];
-            case 2:
-                totalPages = (_a.sent()).length / 10;
-                if (!totalPages) {
-                    return [2 /*return*/, next(new AppError_1.default(404, "Pages not found"))];
-                }
-                pageId = parseInt(page);
-                if (!pageId) {
-                    pageId = 1;
-                }
-                if (pageId > totalPages) {
-                    pageId = totalPages;
-                }
-                console.log("page id:", pageId);
-                return [4 /*yield*/, Task_1.default.find()];
-            case 3: return [4 /*yield*/, (_a.sent()).slice(pageId * 10 - 10, pageId * 10)];
-            case 4:
-                resultPage = _a.sent();
-                // console.log("page found",page);
-                return [2 /*return*/, (0, sendResponse_1.default)(req, res, {
-                        statusCode: 200,
-                        message: "todo tasks",
-                        payload: resultPage,
-                    })];
-            case 5:
-                err_1 = _a.sent();
-                if (err_1 instanceof Error) {
-                    console.log("error message", err_1.message);
-                }
-                else {
-                    console.log("error message", err_1);
-                }
-                return [2 /*return*/, next(new AppError_1.default(400, "Bad request"))];
-            case 6: return [2 /*return*/];
-        }
-    });
-}); };
-exports.getPage = getPage;
-var getTaskWithAttri = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, page, limit, otherProps, count, totalPages, _b, _c, pageId, query, err_2;
+var getSpecificTasks = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, page, limit, otherProps, count, totalPages, _b, _c, pageId, query, err_1;
     return __generator(this, function (_d) {
         switch (_d.label) {
             case 0:
                 _a = req.query, page = _a.page, limit = _a.limit, otherProps = __rest(_a, ["page", "limit"]);
-                // let page = (req.query as {page:string}).page;
-                // let limit = (req.query as {limit:string}).limit
-                // let otherProps = (req.query as {otherProps:object}).otherProps
-                console.log("limit", limit);
-                console.log("other props:", otherProps);
                 count = Number(limit);
                 if (!count) {
                     count = 10;
@@ -148,7 +85,6 @@ var getTaskWithAttri = function (req, res, next) { return __awaiter(void 0, void
                 return [4 /*yield*/, Task_1.default.find(__assign({}, otherProps))];
             case 2:
                 totalPages = _c.apply(_b, [(_d.sent()).length / count]);
-                console.log("totalpages:", totalPages);
                 if (!totalPages) {
                     return [2 /*return*/, next(new AppError_1.default(404, "Pages not found"))];
                 }
@@ -161,7 +97,6 @@ var getTaskWithAttri = function (req, res, next) { return __awaiter(void 0, void
                 }
                 query = Task_1.default.find(__assign({}, otherProps)).skip(pageId * count - count).limit(count);
                 query.then(function (data) {
-                    console.log("Type of payload:", typeof data);
                     return (0, sendResponse_1.default)(req, res, {
                         statusCode: 200,
                         message: "todo tasks",
@@ -170,51 +105,17 @@ var getTaskWithAttri = function (req, res, next) { return __awaiter(void 0, void
                 });
                 return [3 /*break*/, 4];
             case 3:
-                err_2 = _d.sent();
+                err_1 = _d.sent();
                 return [2 /*return*/, next(new AppError_1.default(400, "Bad request"))];
             case 4: return [2 /*return*/];
         }
     });
 }); };
-exports.getTaskWithAttri = getTaskWithAttri;
-// Route params
-var getAllTasks = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var tasks, err_3;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, Task_1.default.find().select("-__v -_id")];
-            case 1:
-                tasks = _a.sent();
-                return [2 /*return*/, (0, sendResponse_1.default)(req, res, {
-                        statusCode: 200,
-                        message: "Tasks",
-                        payload: __spreadArray([], tasks, true),
-                    })];
-            case 2:
-                err_3 = _a.sent();
-                return [2 /*return*/, next(new AppError_1.default(500, " Error in fetching tasks"))];
-            case 3: return [2 /*return*/];
-        }
-    });
-}); };
-exports.getAllTasks = getAllTasks;
+exports.getSpecificTasks = getSpecificTasks;
 var getSingleTask = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var id;
     return __generator(this, function (_a) {
         id = req.params.id;
-        // try{
-        //   const task = await Task.find({id: id}).select("-_id -__v");
-        //   console.log("task:",task.length);
-        //   if(task.length === 0){
-        //   return next(new AppError(404 , `task with id ${id} not found`));
-        //   }
-        //   return sendResponse(req , res ,{statusCode: 200 , message:`task with id ${id}`, payload:{...task}})
-        // }
-        // catch(err){
-        //   return next(new AppError(500 , `internal operation error`));
-        // }
         return [2 /*return*/, (0, sendResponse_1.default)(req, res, {
                 statusCode: 200,
                 message: "task with id ".concat(id),
@@ -252,12 +153,11 @@ var addTask = function (req, res, next) { return __awaiter(void 0, void 0, void 
 }); };
 exports.addTask = addTask;
 var deleteTask = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var id, task, err_4;
+    var id, err_2;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 id = req.params.id;
-                task = req.task;
                 _a.label = 1;
             case 1:
                 _a.trys.push([1, 3, , 4]);
@@ -270,7 +170,7 @@ var deleteTask = function (req, res, next) { return __awaiter(void 0, void 0, vo
                         payload: "",
                     })];
             case 3:
-                err_4 = _a.sent();
+                err_2 = _a.sent();
                 return [2 /*return*/, next(new AppError_1.default(500, "internal error operation"))];
             case 4: return [2 /*return*/];
         }
@@ -278,13 +178,12 @@ var deleteTask = function (req, res, next) { return __awaiter(void 0, void 0, vo
 }); };
 exports.deleteTask = deleteTask;
 var updateTask = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var updateObject, id, task, updatedTask, err_5;
+    var updateObject, id, updatedTask, err_3;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 updateObject = req.body;
                 id = req.params.id;
-                task = req.task;
                 console.log("updateObject", updateObject.description);
                 _a.label = 1;
             case 1:
@@ -294,20 +193,16 @@ var updateTask = function (req, res, next) { return __awaiter(void 0, void 0, vo
                             description: updateObject.description,
                             isComplete: updateObject.isComplete,
                         },
-                        //  {isComplete:updateObject.isComplete }
-                    }, //{...task , {updatedObject}}
-                    { new: true })];
+                    }, { new: true })];
             case 2:
                 updatedTask = _a.sent();
-                //  task = {...task, description : updateObject.description }
-                //  await task.save();
                 return [2 /*return*/, (0, sendResponse_1.default)(req, res, {
                         statusCode: 200,
                         message: "todo with id ".concat(id, " updated"),
                         payload: updatedTask,
                     })];
             case 3:
-                err_5 = _a.sent();
+                err_3 = _a.sent();
                 return [2 /*return*/, next(new AppError_1.default(500, "internal error operation"))];
             case 4: return [2 /*return*/];
         }
