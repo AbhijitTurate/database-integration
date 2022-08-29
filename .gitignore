@@ -1,7 +1,5 @@
-index.html
+*.js
 node_modules
-test.js
-transferData.js
 Task1.js
 tests
 
