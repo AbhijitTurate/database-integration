@@ -1,5 +1,5 @@
 const express = require("express");
-
+const cors = require("cors")
 const todoRouter = require("./routes/todoRouter");
 const sendErrorResponse = require("./middlewares/sendErrorResponse");
 
@@ -7,6 +7,7 @@ const sendErrorResponse = require("./middlewares/sendErrorResponse");
 
 const app = express();
 
+app.use(cors());
 app.use(sendErrorResponse);
 app.use(express.json());
 app.use("/todos",todoRouter);

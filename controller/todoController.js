@@ -53,15 +53,18 @@ const getSpecificTasks = async (req, res, next) => {
       (await Task.find({ ...otherProps })).length / limit
     );
   
-    if (!totalPages) {
-      return next(new AppError(404, "Page not found"));
-    }
+    console.log("totalpages",totalPages);
+    // if (!totalPages) {
+    //   return next(new AppError(404, "Page not found"));
+    // }
   
     if (!page) {
-      page = 1;
+      page = !totalPages?1:totalPages;
+      console.log("Page:",page);
     }
-    if (page > totalPages) {
-      return next(new AppError(500, "No result found"));
+    if (page > totalPages && totalPages) {
+      page=totalPages;
+      // return next(new AppError(500, "No result found"));
     }
 
     let query = Task.find({...otherProps}).skip(page * limit -limit).limit(limit)
@@ -143,7 +146,9 @@ const deleteTask = async (req, res, next) => {
 };
 
 const updateTask = async (req, res, next) => {
+  console.log("in update task");
   const { body: updateObject } = req;
+  console.log("body:",updateObject);
   const {
     params: { id },
   } = req;
